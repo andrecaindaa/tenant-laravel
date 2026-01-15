@@ -18,13 +18,16 @@ class SetTenant
             ], 403);
         }
 
-        $tenant = Tenant::find($tenantId);
+        $user = $request->user();
+
+        $tenant = $user->tenants()->where('tenants.id', $tenantId)->first();
 
         if (!$tenant) {
             return response()->json([
-                'message' => 'Invalid tenant'
+                'message' => 'Unauthorized tenant'
             ], 403);
         }
+
 
         // Guardar o tenant no container
         app()->instance('currentTenant', $tenant);

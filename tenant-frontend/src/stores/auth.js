@@ -13,6 +13,9 @@ export const useAuthStore = defineStore('auth', {
       this.loading = true
 
       try {
+
+        await api.get('/sanctum/csrf-cookie')
+
         const response = await api.post('/login', {
           email,
           password,
@@ -23,6 +26,15 @@ export const useAuthStore = defineStore('auth', {
       } finally {
         this.loading = false
       }
+    },
+
+    async hydrate() {
+    try {
+        const { data } = await api.get('/me')
+        this.user = data.user
+    } catch {
+        this.user = null
+    }
     },
 
     async logout() {

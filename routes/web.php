@@ -10,6 +10,32 @@ use App\Models\Tenant;
 |--------------------------------------------------------------------------
 */
 
+Route::middleware(['auth', 'tenant'])
+    ->get('/billing', function (Request $request) {
+
+        $tenant = app('currentTenant');
+        $plan   = $tenant->plan();
+
+        return response()->json([
+            'tenant' => [
+                'id'   => $tenant->id,
+                'name' => $tenant->name,
+            ],
+
+            'plan' => $plan ? [
+                'name'   => $plan->name,
+                'slug'   => $plan->slug,
+                'price'  => $plan->price,
+                'limits' => $plan->limits,
+            ] : null,
+
+            'usage' => $tenant->usage(),
+        ]);
+    });
+
+
+
+
 Route::post('/projects')
     ->middleware(['auth', 'tenant', 'limit:projects']);
 

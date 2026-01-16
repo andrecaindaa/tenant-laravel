@@ -1,27 +1,36 @@
 <?php
 
+// app/Http/Middleware/EnsureTenantLimit.php
+
 namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class EnsureTenantLimit
 {
-    public function handle($request, Closure $next, string $limit)
+    public function handle(Request $request, Closure $next, string $key)
     {
         $tenant = app('currentTenant');
-        $max = $tenant->limit($limit);
 
-        if ($max !== null) {
-            $count = match ($limit) {
-                'projects' => \App\Models\Project::count(),
-                default => 0,
-            };
+        if (!$tenant) {
+            abort(400, 'Tenant not resolved');
+        }
 
-            if ($count >= $max) {
-                abort(403, 'Plan limit reached');
-            }
+        $limit = $tenant->limit($key);
+
+        if ($limit === null) {
+            return $next($request); // ilimitado
+        }
+
+        $current = match ($key) {
+            'projects' => $tenant->projects()->count(),
+            'users'    => $tenant->users()->count(),
+            default    => 0,
+        };
+
+        if ($current >= $limit) {
+            abort(403, "Limit reached for {$key}");
         }
 
         return $next($request);

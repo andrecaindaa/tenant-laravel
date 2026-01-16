@@ -42,4 +42,17 @@ class Tenant extends Model
         return $this->plan()?->limits[$key] ?? null;
     }
 
+    public function projects()
+    {
+        return $this->hasMany(Project::class);
+    }
+
+    public function usage(): array
+    {
+        return [
+            'projects' => $this->projects()->count(),
+            'users'    => $this->users()->count(),
+        ];
+    }
+
 }

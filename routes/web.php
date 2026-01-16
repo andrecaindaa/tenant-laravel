@@ -10,6 +10,10 @@ use App\Models\Tenant;
 |--------------------------------------------------------------------------
 */
 
+Route::post('/projects')
+    ->middleware(['auth', 'tenant', 'limit:projects']);
+
+
 Route::get('/me', function (Request $request) {
     $user = $request->user();
 

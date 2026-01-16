@@ -10,6 +10,8 @@ class Kernel extends HttpKernel
         \Illuminate\Http\Middleware\HandleCors::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+
+
     ];
 
     protected $middlewareGroups = [
@@ -31,5 +33,6 @@ class Kernel extends HttpKernel
         'auth'   => \App\Http\Middleware\Authenticate::class,
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'tenant'=> \App\Http\Middleware\SetTenant::class,
+        'limit' => \App\Http\Middleware\EnsureTenantLimit::class,
     ];
 }

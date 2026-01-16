@@ -4,6 +4,16 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
+
+// routes/api.php
+Route::get('/me', function (Request $request) {
+    return response()->json([
+        'user' => $request->user(),
+        'tenant_id' => session('tenant_id'),
+    ]);
+})->middleware('auth');
+
+
 Route::post('/login', function (Request $request) {
 
     $credentials = $request->validate([
@@ -41,4 +51,5 @@ Route::post('/logout', function (Request $request) {
     return response()->json([
         'message' => 'Logged out'
     ]);
-})->middleware('auth:sanctum');
+})->middleware('auth');
+

@@ -5,6 +5,7 @@ export const useAuthStore = defineStore('auth', {
   state: () => ({
     user: null,
     tenants: [],
+     permissions: [],
     loading: false,
   }),
 
@@ -32,6 +33,7 @@ export const useAuthStore = defineStore('auth', {
     try {
         const { data } = await api.get('/me')
         this.user = data.user
+        this.permissions = data.permissions ?? []
     } catch {
         this.user = null
     }

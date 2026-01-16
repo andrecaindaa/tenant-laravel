@@ -10,6 +10,25 @@ use App\Models\Tenant;
 |--------------------------------------------------------------------------
 */
 
+Route::get('/me', function (Request $request) {
+    $user = $request->user();
+
+    return response()->json([
+        'user' => $user,
+        'tenant_id' => session('tenant_id'),
+        'permissions' => $user
+            ?->permissionsInTenant(),
+    ]);
+})->middleware('auth');
+
+
+
+Route::middleware(['auth', 'tenant', 'can:users.manage'])
+    ->post('/users', function () {
+        //  criar user no tenant
+    });
+
+
 Route::get('/', function () {
     return view('welcome');
 });

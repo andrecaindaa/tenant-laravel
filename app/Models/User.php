@@ -37,4 +37,31 @@ class User extends Authenticatable
             ->withPivot('role')
             ->withTimestamps();
     }
+
+    public function roleInTenant($tenantId = null): ?string
+    {
+        $tenantId ??= session('tenant_id');
+
+        if (!$tenantId) {
+            return null;
+        }
+
+        return $this->tenants()
+            ->where('tenants.id', $tenantId)
+            ->first()
+            ?->pivot
+            ?->role;
+    }
+
+    public function permissionsInTenant($tenantId = null): array
+    {
+        $role = $this->roleInTenant($tenantId);
+
+        if (!$role) {
+            return [];
+        }
+
+        return config("roles.$role", []);
+    }
+
 }

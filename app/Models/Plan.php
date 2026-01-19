@@ -12,10 +12,12 @@ class Plan extends Model
         'price',
         'interval',
         'limits',
-        'active',
+        'active',//
+        'features',
     ];
 
     protected $casts = [
         'limits' => 'array',
+        'features' => 'array',
     ];
 }

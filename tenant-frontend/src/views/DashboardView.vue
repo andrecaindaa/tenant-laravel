@@ -15,27 +15,23 @@ onMounted(() => {
   <div>
     <h1>Dashboard</h1>
 
-    <p>
-      <strong>Tenant:</strong>
-      {{ tenant.currentTenant?.name }}
-    </p>
+    <p><strong>Tenant:</strong> {{ tenant.currentTenant?.name }}</p>
 
     <div v-if="billing.plan">
-      <h2>Plano: {{ billing.plan.name }}</h2>
+      <p><strong>Plano:</strong> {{ billing.plan.name }}</p>
+
+      <p v-if="billing.onTrial">
+        Trial ativo até {{ billing.trialEndsAt }}
+      </p>
 
       <ul>
         <li
           v-for="(limit, key) in billing.plan.limits"
           :key="key"
         >
-          {{ key }}:
-          {{ billing.usage[key] ?? 0 }} / {{ limit }}
+          {{ key }}: {{ billing.usage[key] ?? 0 }} / {{ limit }}
         </li>
       </ul>
     </div>
-
-    <p v-else>
-      Nenhum plano ativo
-    </p>
   </div>
 </template>

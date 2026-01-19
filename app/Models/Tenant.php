@@ -27,11 +27,24 @@ class Tenant extends Model
             ->withTimestamps();
     }
 
+    public function limit(string $key): ?int
+    {
+        return $this->currentPlan()?->limits[$key] ?? null;
+    }
+
+    public function hasFeature(string $feature): bool
+    {
+        return $this->currentPlan()?->features[$feature] ?? false;
+    }
+
+
     public function subscription()
     {
         return $this->hasOne(Subscription::class);
     }
 
+
+/*
     public function plan(): ?Plan
     {
         return $this->subscription?->plan;
@@ -40,7 +53,7 @@ class Tenant extends Model
     public function limit(string $key): ?int
     {
         return $this->plan()?->limits[$key] ?? null;
-    }
+    }*/
 
     public function projects()
     {
@@ -54,5 +67,6 @@ class Tenant extends Model
             'users'    => $this->users()->count(),
         ];
     }
+
 
 }

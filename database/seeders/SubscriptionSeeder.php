@@ -13,7 +13,7 @@ class SubscriptionSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-   public function run(): void
+    public function run(): void
     {
         $plan = Plan::where('slug', 'free')->first();
 
@@ -26,4 +26,5 @@ class SubscriptionSeeder extends Seeder
             ]);
         });
     }
+
 }

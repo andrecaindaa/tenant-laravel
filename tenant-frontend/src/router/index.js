@@ -1,29 +1,36 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
-import { useTenantStore } from '@/stores/tenant'
 
-const routes = [
-  { path: '/login', component: () => import('@/views/LoginView.vue') },
-  { path: '/tenants', component: () => import('@/views/TenantSelectView.vue') },
-  { path: '/dashboard', component: () => import('@/views/DashboardView.vue') },
-]
+import LoginView from '@/views/LoginView.vue'
+import SelectTenant from '@/views/SelectTenant.vue'
+import DashboardView from '@/views/DashboardView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
-  routes,
-})
 
-router.beforeEach((to) => {
-  const auth = useAuthStore()
-  const tenant = useTenantStore()
+  routes: [
+    {
+      path: '/login',
+      name: 'login',
+      component: LoginView,
+    },
 
-  if (!auth.user && to.path !== '/login') {
-    return '/login'
-  }
+    {
+      path: '/select-tenant',
+      name: 'select-tenant',
+      component: SelectTenant,
+    },
 
-  if (auth.user && !tenant.currentTenant && to.path === '/dashboard') {
-    return '/tenants'
-  }
+    {
+      path: '/dashboard',
+      name: 'dashboard',
+      component: DashboardView,
+    },
+
+    {
+      path: '/',
+      redirect: '/login',
+    },
+  ],
 })
 
 export default router

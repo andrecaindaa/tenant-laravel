@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Selecionar Empresa</title>
+
     <style>
         body {
             font-family: sans-serif;
             background: #f5f5f5;
         }
+
         .box {
             max-width: 500px;
             margin: 80px auto;
@@ -15,11 +17,11 @@
             padding: 24px;
             border-radius: 6px;
         }
-        button {
+
+        button, input {
             width: 100%;
             padding: 12px;
             margin-top: 10px;
-            cursor: pointer;
         }
     </style>
 </head>
@@ -28,18 +30,26 @@
 <div class="box">
     <h2>Selecionar empresa</h2>
 
-    @if($tenants->isEmpty())
+    @forelse($tenants as $tenant)
+        <form method="POST" action="/select-tenant/{{ $tenant->id }}">
+            @csrf
+            <button type="submit">
+                {{ $tenant->name }}
+            </button>
+        </form>
+    @empty
         <p>Não tens empresas associadas.</p>
-    @else
-        @foreach($tenants as $tenant)
-            <form method="POST" action="/select-tenant/{{ $tenant->id }}">
-                @csrf
-                <button type="submit">
-                    {{ $tenant->name }}
-                </button>
-            </form>
-        @endforeach
-    @endif
+    @endforelse
+
+    <hr>
+
+    <h3>Criar nova empresa</h3>
+
+    <form method="POST" action="/tenants">
+        @csrf
+        <input name="name" placeholder="Nome da empresa" required>
+        <button>Criar</button>
+    </form>
 
     <form method="POST" action="{{ route('logout') }}">
         @csrf

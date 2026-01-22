@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Plan extends Model
 {
@@ -10,14 +11,21 @@ class Plan extends Model
         'name',
         'slug',
         'price',
-        'interval',
         'limits',
-        'active',//
-        'features',
+        'active',
     ];
 
     protected $casts = [
         'limits' => 'array',
-        'features' => 'array',
+        'active' => 'boolean',
     ];
+
+    protected static function booted()
+    {
+        static::creating(function ($plan) {
+            if (empty($plan->slug)) {
+                $plan->slug = Str::slug($plan->name);
+            }
+        });
+    }
 }

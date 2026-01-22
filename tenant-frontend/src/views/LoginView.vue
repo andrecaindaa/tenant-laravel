@@ -3,26 +3,59 @@ import { ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
 
-const email = ref('')
-const password = ref('')
+const email = ref('admin@teste.com')
+const password = ref('password')
+const error = ref(null)
+const loading = ref(false)
+
 const auth = useAuthStore()
 const router = useRouter()
 
 async function submit() {
-  await auth.login(email.value, password.value)
+  error.value = null
+  loading.value = true
 
-  if (auth.tenants.length === 1) {
-    router.push('/select-tenant')
-  } else {
-    router.push('/tenants')
+  try {
+    await auth.login(email.value, password.value)
+
+    if (auth.tenants.length >= 1) {
+      router.push('/select-tenant')
+    } else {
+      error.value = 'Utilizador sem tenants associados'
+    }
+  } catch {
+    error.value = 'Credenciais inválidas'
+  } finally {
+    loading.value = false
   }
 }
 </script>
 
 <template>
-  <form @submit.prevent="submit">
-    <input v-model="email" placeholder="Email" />
-    <input v-model="password" type="password" placeholder="Password" />
-    <button>Login</button>
-  </form>
+  <div class="page">
+    <div class="card">
+      <h1>Login</h1>
+
+      <form @submit.prevent="submit">
+        <input v-model="email" placeholder="Email" />
+        <input v-model="password" type="password" placeholder="Password" />
+
+        <button :disabled="loading">
+          {{ loading ? 'A entrar...' : 'Entrar' }}
+        </button>
+      </form>
+
+      <p v-if="error" class="error">
+        {{ error }}
+      </p>
+    </div>
+  </div>
 </template>
+
+<style scoped>
+.error {
+  margin-top: 1rem;
+  color: #dc2626;
+  text-align: center;
+}
+</style>

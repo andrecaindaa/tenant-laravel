@@ -8,8 +8,7 @@ class TenantServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        // Declara o binding, mesmo antes de existir tenant
-        $this->app->bind('currentTenant', function () {
+        $this->app->singleton('currentTenant', function () {
             return null;
         });
     }

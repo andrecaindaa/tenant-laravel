@@ -3,7 +3,9 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 use App\Models\Tenant;
+use App\Models\Plan;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,14 +65,36 @@ Route::post('/logout', function (Request $request) {
 */
 Route::get('/select-tenant', function () {
     $user = Auth::user();
-
-    // Ajusta conforme a tua relação (ex: $user->tenants)
     $tenants = $user->tenants;
 
     return view('select-tenant', compact('tenants'));
 })->middleware('auth')->name('select-tenant');
 
 Route::post('/select-tenant/{tenant}', function (Tenant $tenant) {
+    session(['tenant_id' => $tenant->id]);
+
+    return redirect()->route('dashboard');
+})->middleware('auth');
+
+/*
+|--------------------------------------------------------------------------
+| Create Tenant
+|--------------------------------------------------------------------------
+*/
+Route::post('/tenants', function (Request $request) {
+    $request->validate([
+        'name' => ['required', 'string', 'max:255'],
+    ]);
+
+    $tenant = Tenant::create([
+        'name' => $request->name,
+        'slug' => Str::slug($request->name),
+    ]);
+
+    Auth::user()->tenants()->attach($tenant->id, [
+        'role' => 'owner',
+    ]);
+
     session(['tenant_id' => $tenant->id]);
 
     return redirect()->route('dashboard');
@@ -95,7 +119,11 @@ Route::get('/dashboard', function () {
     ]);
 })->middleware(['auth', 'tenant'])->name('dashboard');
 
-
+/*
+|--------------------------------------------------------------------------
+| Subscription
+|--------------------------------------------------------------------------
+*/
 Route::post('/subscription/change', function (Request $request) {
     $request->validate([
         'plan_id' => ['required', 'exists:plans,id'],
@@ -109,3 +137,27 @@ Route::post('/subscription/change', function (Request $request) {
 
     return back()->with('success', 'Plano atualizado com sucesso.');
 })->middleware(['auth', 'tenant']);
+
+
+Route::get('/plans', function () {
+    return view('plans.index', [
+        'plans' => Plan::all(),
+    ]);
+})->middleware('auth');
+
+Route::post('/plans', function (Request $request) {
+    $data = $request->validate([
+        'name'   => 'required',
+        'price'  => 'required|numeric',
+        'limits' => 'required|array',
+    ]);
+
+    Plan::create([
+        'name'   => $data['name'],
+        'price'  => $data['price'],
+        'limits' => $data['limits'],
+        'active' => true,
+    ]);
+
+    return back();
+})->middleware('auth');

@@ -12,6 +12,7 @@ class Subscription extends Model
         'status',
         'trial_ends_at',
         'ends_at',
+        'next_plan_id',
     ];
 
     protected $casts = [

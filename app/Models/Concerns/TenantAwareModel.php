@@ -3,7 +3,9 @@
 namespace App\Models\Concerns;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Scopes\TenantScope;
+use App\Models\Scopes\TenantScope;
+
+
 
 abstract class TenantAwareModel extends Model
 {

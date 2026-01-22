@@ -13,23 +13,16 @@ class SetTenant
         $tenantId = session('tenant_id');
 
         if (!$tenantId) {
-            return response()->json([
-                'message' => 'No tenant selected'
-            ], 403);
+            return redirect()->route('select-tenant');
         }
 
-        $user = $request->user();
-
-        $tenant = $user->tenants()->where('tenants.id', $tenantId)->first();
+        $tenant = Tenant::find($tenantId);
 
         if (!$tenant) {
-            return response()->json([
-                'message' => 'Unauthorized tenant'
-            ], 403);
+            session()->forget('tenant_id');
+            return redirect()->route('select-tenant');
         }
 
-
-        // Guardar o tenant no container
         app()->instance('currentTenant', $tenant);
 
         return $next($request);

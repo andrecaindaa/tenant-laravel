@@ -35,4 +35,5 @@ class Kernel extends HttpKernel
         'tenant'=> \App\Http\Middleware\SetTenant::class,
         'limit'  => \App\Http\Middleware\EnsureTenantLimit::class,
     ];
+
 }

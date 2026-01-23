@@ -12,5 +12,8 @@ class Kernel extends ConsoleKernel
        $schedule->command('billing:apply-downgrades')->hourly();
 
         $schedule->command('billing:notify-trial-ending')->daily();
+
+          $schedule->command('billing:process-downgrades')->daily();
+        $schedule->command('billing:check-trials')->daily();
     }
 }
